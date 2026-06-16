@@ -1,0 +1,90 @@
+[
+  {
+    "id": "action_drink",
+    "label": "飲む",
+    "kana": "のむ",
+    "aliases": [],
+    "imageMode": "sequence",
+    "images": ["☕", "💧"],
+    "category": "basic",
+    "nounCategoryIds": ["drink"],
+    "visible": true
+  },
+  {
+    "id": "action_eat",
+    "label": "食べる",
+    "kana": "たべる",
+    "aliases": [],
+    "imageMode": "sequence",
+    "images": ["🍽️", "🥢"],
+    "category": "basic",
+    "nounCategoryIds": ["food"],
+    "visible": true
+  },
+  {
+    "id": "action_move",
+    "label": "移動",
+    "kana": "いどう",
+    "aliases": ["歩く", "行く", "帰る", "向かう"],
+    "imageMode": "sequence",
+    "images": ["🚶", "🏃"],
+    "category": "movement",
+    "nounCategoryIds": ["place"],
+    "visible": true
+  },
+  {
+    "id": "action_pain",
+    "label": "痛い",
+    "kana": "いたい",
+    "aliases": [],
+    "imageMode": "single",
+    "images": ["😣"],
+    "category": "condition",
+    "nounCategoryIds": ["body"],
+    "visible": true
+  },
+  {
+    "id": "action_call",
+    "label": "呼ぶ",
+    "kana": "よぶ",
+    "aliases": [],
+    "imageMode": "single",
+    "images": ["🔔"],
+    "category": "communication",
+    "nounCategoryIds": ["person"],
+    "visible": true
+  },
+  {
+    "id": "action_help",
+    "label": "手伝う",
+    "kana": "てつだう",
+    "aliases": [],
+    "imageMode": "single",
+    "images": ["🤝"],
+    "category": "communication",
+    "nounCategoryIds": ["help"],
+    "visible": true
+  },
+  {
+    "id": "action_sleep",
+    "label": "寝る",
+    "kana": "ねる",
+    "aliases": [],
+    "imageMode": "single",
+    "images": ["🛏️"],
+    "category": "basic",
+    "nounCategoryIds": ["sleep"],
+    "visible": true
+  },
+  {
+    "id": "action_see",
+    "label": "見る",
+    "kana": "みる",
+    "aliases": [],
+    "imageMode": "single",
+    "images": ["👀"],
+    "category": "basic",
+    "nounCategoryIds": ["media"],
+    "visible": true
+  }
+]
