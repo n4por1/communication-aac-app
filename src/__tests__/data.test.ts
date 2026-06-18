@@ -27,8 +27,14 @@ describe("cards.json 基本構造", () => {
 });
 
 describe("ホームカード", () => {
-  it("8件のホームカードが存在する", () => {
-    expect(homeCards).toHaveLength(8);
+  it("デフォルト表示のホームカードが8件存在する", () => {
+    const visibleHome = homeCards.filter((c) => c.visible);
+    expect(visibleHome).toHaveLength(8);
+  });
+
+  it("中優先度（visible: false）のホームカードが存在する", () => {
+    const hiddenHome = homeCards.filter((c) => !c.visible);
+    expect(hiddenHome.length).toBeGreaterThan(0);
   });
 
   it("direct と group のみ", () => {
