@@ -6,7 +6,7 @@ import { useSettingsStore } from "./useSettingsStore";
 const BASE_CARDS = cardsData as CommCard[];
 
 export const useCardStore = () => {
-  const { cardSettings, isLoaded } = useSettingsStore();
+  const { cardSettings, homeOrder, isLoaded } = useSettingsStore();
 
   const cards = useMemo(
     () =>
@@ -25,10 +25,19 @@ export const useCardStore = () => {
   const getCard = (id: string): CommCard | undefined =>
     cards.find((c) => c.id === id);
 
-  const homeCards = useMemo(
-    () => cards.filter((c) => (c.kind === "direct" || c.kind === "group") && !c.parentId),
-    [cards]
-  );
+  const homeCards = useMemo(() => {
+    const all = cards.filter((c) => (c.kind === "direct" || c.kind === "group") && !c.parentId);
+    if (homeOrder.length === 0) return all;
+    const ordered: CommCard[] = [];
+    for (const id of homeOrder) {
+      const card = all.find((c) => c.id === id);
+      if (card) ordered.push(card);
+    }
+    for (const card of all) {
+      if (!homeOrder.includes(card.id)) ordered.push(card);
+    }
+    return ordered;
+  }, [cards, homeOrder]);
 
   const utilityCards = useMemo(
     () => cards.filter((c) => c.kind === "utility"),

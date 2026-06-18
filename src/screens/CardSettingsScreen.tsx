@@ -1,7 +1,11 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import DraggableFlatList, {
+  RenderItemParams,
+  ScaleDecorator,
+} from "react-native-draggable-flatlist";
 import * as ImagePicker from "expo-image-picker";
 import React, { useCallback, useMemo } from "react";
-import { Alert, SectionList, StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import SettingsListItem from "../components/SettingsListItem";
 import { useCardStore } from "../hooks/useCardStore";
 import { useImageStorage } from "../hooks/useImageStorage";
@@ -10,25 +14,15 @@ import { CommCard, RootStackParamList } from "../types";
 
 type Props = NativeStackScreenProps<RootStackParamList, "CardSettings">;
 
-type Section = { title: string; emoji: string; data: CommCard[] };
-
 const CardSettingsScreen: React.FC<Props> = () => {
-  const { cards, homeCards, getChildren } = useCardStore();
-  const { setCardVisible } = useSettingsStore();
+  const { cards, homeCards } = useCardStore();
+  const { setCardVisible, setHomeOrder } = useSettingsStore();
   const { saveCustomImage, deleteCustomImage } = useImageStorage();
 
-  const sections: Section[] = useMemo(() => {
-    const groups = homeCards.filter((c) => c.kind === "group");
-
-    return [
-      { title: "ホーム", emoji: "🏠", data: homeCards },
-      ...groups.map((g) => ({
-        title: `${g.label} の項目`,
-        emoji: g.defaultImages[0] ?? "",
-        data: cards.filter((c) => c.parentId === g.id),
-      })),
-    ].filter((s) => s.data.length > 0);
-  }, [cards, homeCards]);
+  const groups = useMemo(
+    () => homeCards.filter((c) => c.kind === "group"),
+    [homeCards]
+  );
 
   const handleToggle = useCallback(
     (cardId: string, visible: boolean) => setCardVisible(cardId, visible),
@@ -71,26 +65,73 @@ const CardSettingsScreen: React.FC<Props> = () => {
     ]);
   }, [deleteCustomImage]);
 
-  return (
-    <SectionList
-      sections={sections}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
+  const renderHomeItem = useCallback(
+    ({ item, drag, isActive }: RenderItemParams<CommCard>) => (
+      <ScaleDecorator>
         <SettingsListItem
           card={item}
           onToggleVisible={handleToggle}
           onSelectImage={handleSelectImage}
           onDeleteImage={handleDeleteImage}
+          drag={drag}
+          isActive={isActive}
         />
-      )}
-      renderSectionHeader={({ section }) => (
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionEmoji}>{section.emoji}</Text>
-          <Text style={styles.sectionTitle}>{section.title}</Text>
-        </View>
-      )}
-      contentContainerStyle={styles.list}
-      stickySectionHeadersEnabled={false}
+      </ScaleDecorator>
+    ),
+    [handleToggle, handleSelectImage, handleDeleteImage]
+  );
+
+  const ListHeader = useMemo(
+    () => (
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionEmoji}>🏠</Text>
+        <Text style={styles.sectionTitle}>ホーム</Text>
+        <Text style={styles.sectionHint}>長押しでドラッグ</Text>
+      </View>
+    ),
+    []
+  );
+
+  const ListFooter = useMemo(
+    () => (
+      <View>
+        {groups.map((g) => {
+          const children = cards.filter((c) => c.parentId === g.id);
+          if (children.length === 0) return null;
+          return (
+            <View key={g.id}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionEmoji}>{g.defaultImages[0] ?? ""}</Text>
+                <Text style={styles.sectionTitle}>{g.label} の項目</Text>
+              </View>
+              {children.map((child) => (
+                <SettingsListItem
+                  key={child.id}
+                  card={child}
+                  onToggleVisible={handleToggle}
+                  onSelectImage={handleSelectImage}
+                  onDeleteImage={handleDeleteImage}
+                />
+              ))}
+            </View>
+          );
+        })}
+        <View style={styles.footer} />
+      </View>
+    ),
+    [groups, cards, handleToggle, handleSelectImage, handleDeleteImage]
+  );
+
+  return (
+    <DraggableFlatList
+      data={homeCards}
+      keyExtractor={(item) => item.id}
+      renderItem={renderHomeItem}
+      onDragEnd={({ data }) => setHomeOrder(data.map((c) => c.id))}
+      ListHeaderComponent={ListHeader}
+      ListFooterComponent={ListFooter}
+      containerStyle={styles.list}
+      activationDistance={10}
     />
   );
 };
@@ -98,7 +139,7 @@ const CardSettingsScreen: React.FC<Props> = () => {
 export default CardSettingsScreen;
 
 const styles = StyleSheet.create({
-  list: { padding: 16, paddingBottom: 48 },
+  list: { padding: 16 },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -108,5 +149,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   sectionEmoji: { fontSize: 22, marginRight: 8 },
-  sectionTitle: { fontSize: 16, fontWeight: "700", color: "#475569" },
+  sectionTitle: { fontSize: 16, fontWeight: "700", color: "#475569", flex: 1 },
+  sectionHint: { fontSize: 12, color: "#94A3B8" },
+  footer: { height: 48 },
 });

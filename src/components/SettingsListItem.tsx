@@ -7,6 +7,8 @@ type Props = {
   onToggleVisible: (cardId: string, visible: boolean) => void;
   onSelectImage: (card: CommCard) => void;
   onDeleteImage: (card: CommCard) => void;
+  drag?: () => void;
+  isActive?: boolean;
 };
 
 const SettingsListItem: React.FC<Props> = ({
@@ -14,8 +16,15 @@ const SettingsListItem: React.FC<Props> = ({
   onToggleVisible,
   onSelectImage,
   onDeleteImage,
+  drag,
+  isActive,
 }) => (
-  <View style={styles.container}>
+  <View style={[styles.container, isActive && styles.activeContainer]}>
+    {drag && (
+      <TouchableOpacity onPressIn={drag} style={styles.dragHandle} accessibilityLabel="並び替え">
+        <Text style={styles.dragIcon}>☰</Text>
+      </TouchableOpacity>
+    )}
     <View style={styles.thumb}>
       {card.customImageUri ? (
         <Image source={{ uri: card.customImageUri }} style={styles.thumbImage} resizeMode="cover" />
@@ -66,6 +75,18 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
+  activeContainer: {
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 8,
+    backgroundColor: "#F0F7FF",
+  },
+  dragHandle: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 4,
+  },
+  dragIcon: { fontSize: 20, color: "#CBD5E1" },
   thumb: {
     width: 52,
     height: 52,
