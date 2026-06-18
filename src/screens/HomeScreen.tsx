@@ -54,7 +54,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     <View style={styles.screen}>
       <FlatList
         key={`home-${numColumns}`}
-        data={homeCards}
+        data={homeCards.filter((c) => c.visible)}
         numColumns={numColumns}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (

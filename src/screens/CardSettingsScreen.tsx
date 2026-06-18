@@ -18,13 +18,12 @@ const CardSettingsScreen: React.FC<Props> = () => {
   const { saveCustomImage, deleteCustomImage } = useImageStorage();
 
   const sections: Section[] = useMemo(() => {
-    const homeDirect = homeCards.filter((c) => c.kind === "direct");
     const groups = homeCards.filter((c) => c.kind === "group");
 
     return [
-      { title: "ホーム（直接）", emoji: "🏠", data: homeDirect },
+      { title: "ホーム", emoji: "🏠", data: homeCards },
       ...groups.map((g) => ({
-        title: g.label,
+        title: `${g.label} の項目`,
         emoji: g.defaultImages[0] ?? "",
         data: cards.filter((c) => c.parentId === g.id),
       })),
