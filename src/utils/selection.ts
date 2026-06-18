@@ -1,19 +1,6 @@
-import { ActionItem, NounItem, SelectionResult } from "../types";
+import { CommCard } from "../types";
 
-export const createSelectionResult = (
-  action: ActionItem,
-  noun: NounItem
-): SelectionResult => ({
-  action,
-  noun,
-  displayText: `${action.label} + ${noun.label}`,
-});
-
-export const getNounsForAction = (
-  action: ActionItem,
-  allNouns: NounItem[]
-): NounItem[] =>
-  allNouns.filter(
-    (noun) =>
-      action.nounCategoryIds.includes(noun.category) && noun.visible
-  );
+export const getChildren = (group: CommCard, allCards: CommCard[]): CommCard[] =>
+  (group.childrenIds ?? [])
+    .map((id) => allCards.find((c) => c.id === id))
+    .filter((c): c is CommCard => !!c && c.visible);

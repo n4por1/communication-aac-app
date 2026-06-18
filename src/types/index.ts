@@ -1,38 +1,24 @@
-export type ImageMode = "single" | "sequence";
+export type CardKind = "direct" | "group" | "utility";
+export type ImageKind = "pictogram" | "photo" | "sequence";
 
-export type ActionItem = {
+export type CommCard = {
   id: string;
   label: string;
-  kana: string;
-  aliases: string[];
-  imageMode: ImageMode;
-  images: string[];
-  category: string;
-  nounCategoryIds: string[];
-  visible: boolean;
-};
-
-export type NounItem = {
-  id: string;
-  label: string;
-  kana: string;
-  category: string;
-  defaultImage: string;
+  kana?: string;
+  kind: CardKind;
+  imageKind: ImageKind;
+  defaultImages: string[];
   customImageUri?: string | null;
-  allowCustomImage: boolean;
+  allowCustomImage?: boolean;
   visible: boolean;
-};
-
-export type SelectionResult = {
-  action: ActionItem;
-  noun: NounItem;
-  displayText: string;
+  parentId?: string | null;
+  childrenIds?: string[];
 };
 
 export type RootStackParamList = {
   Home: undefined;
-  NounSelection: { actionId: string };
-  Confirmation: { actionId: string; nounId: string };
+  Detail: { groupId: string };
+  Confirm: { cardId: string; groupId?: string };
   Settings: undefined;
-  NounSettings: undefined;
+  CardSettings: undefined;
 };

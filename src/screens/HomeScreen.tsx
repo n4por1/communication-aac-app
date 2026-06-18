@@ -8,14 +8,15 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import ActionCard from "../components/ActionCard";
-import { useCommunicationStore } from "../hooks/useCommunicationStore";
-import { ActionItem, RootStackParamList } from "../types";
+import CommCardView from "../components/CommCardView";
+import UtilityBar from "../components/UtilityBar";
+import { useCardStore } from "../hooks/useCardStore";
+import { CommCard, RootStackParamList } from "../types";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
-  const { actions, isLoaded } = useCommunicationStore();
+  const { homeCards, utilityCards, isLoaded } = useCardStore();
   const { width } = useWindowDimensions();
   const numColumns = width >= 768 ? 3 : 2;
 
@@ -41,45 +42,41 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     );
   }
 
+  const handlePress = (card: CommCard) => {
+    if (card.kind === "group") {
+      navigation.navigate("Detail", { groupId: card.id });
+    } else {
+      navigation.navigate("Confirm", { cardId: card.id });
+    }
+  };
+
   return (
-    <FlatList
-      key={`home-${numColumns}`}
-      data={actions}
-      numColumns={numColumns}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }: { item: ActionItem }) => (
-        <ActionCard
-          action={item}
-          onPress={(action) =>
-            navigation.navigate("NounSelection", { actionId: action.id })
-          }
-        />
-      )}
-      contentContainerStyle={styles.list}
-    />
+    <View style={styles.screen}>
+      <FlatList
+        key={`home-${numColumns}`}
+        data={homeCards}
+        numColumns={numColumns}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <CommCardView card={item} onPress={handlePress} />
+        )}
+        contentContainerStyle={styles.list}
+      />
+      <UtilityBar
+        cards={utilityCards}
+        onPress={(card) => navigation.navigate("Confirm", { cardId: card.id })}
+      />
+    </View>
   );
 };
 
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  list: {
-    padding: 8,
-    paddingBottom: 32,
-  },
-  center: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  loadingText: {
-    fontSize: 18,
-    color: "#94A3B8",
-  },
-  settingsBtn: {
-    padding: 8,
-  },
-  settingsIcon: {
-    fontSize: 26,
-  },
+  screen: { flex: 1 },
+  list: { padding: 8, paddingBottom: 8 },
+  center: { flex: 1, alignItems: "center", justifyContent: "center" },
+  loadingText: { fontSize: 18, color: "#94A3B8" },
+  settingsBtn: { padding: 8 },
+  settingsIcon: { fontSize: 26 },
 });

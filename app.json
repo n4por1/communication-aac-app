@@ -13,9 +13,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.example.communicationaacapp",
+      "bundleIdentifier": "com.n4pori.comtool",
       "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "名詞カードに表示するカスタム画像を選択するために写真ライブラリを使用します。"
+        "NSPhotoLibraryUsageDescription": "名詞カードに表示するカスタム画像を選択するために写真ライブラリを使用します。",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -23,7 +24,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.example.communicationaacapp"
+      "package": "com.n4pori.comtool"
     },
     "plugins": [
       [
@@ -37,8 +38,9 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "YOUR_EAS_PROJECT_ID"
+        "projectId": "0654b1c9-cd6e-4a81-b464-f2785feb997a"
       }
-    }
+    },
+    "owner": "n4pori"
   }
 }
